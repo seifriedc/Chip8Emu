@@ -1,11 +1,16 @@
 // Chris Seifried
 // CHIP-8 Disassembler
 
+// NOTE: ROMS are in the Public Domain and are free
+// 	 to use, modify, and distribute.
+
+// NOTE: use "od -tx1 <file>" to dump rom contents
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-int disInstruction(int pc, unsigned char* buf);
+void disInstruction(int pc, unsigned char* buf);
 
 int main(int argc, char** argv) {
 
@@ -38,6 +43,7 @@ int main(int argc, char** argv) {
     {
         // Disassemble next instruction
         disInstruction(pc, buffer);
+        printf("\n");
 
         // Increment program counter
         pc += 2;
@@ -46,7 +52,42 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-int disInstruction(int pc, unsigned char* buf)
+void disInstruction(int pc, unsigned char* buf)
 {
-    return -1;
+    uint16_t tmp = *(uint16_t*)(buf+pc);        // Get instr
+    uint16_t inst = (tmp >> 8) | (tmp << 8);    // Flip endianness
+    uint8_t top = (inst >> 12);                 // Get top half-byte
+
+    // Print address and op
+    printf("%04x %04x ", pc, inst);
+
+    // Act on op
+    switch (top)
+    {
+    	case 0x0:
+            switch (inst & 0x00FF)
+            {
+               	case 0xE0: printf("%-10s", "CLRSCREEN"); break;
+               	case 0xEE: printf("%-10s", "RET"); break;
+                case 0x00: printf("%-10s", "NOP"); break;
+               	default:   printf("ERROR 0x0 OP"); break;
+            }
+            break;
+       	case 0x1: printf("0x1 not implemented yet"); break;
+       	case 0x2: printf("0x2 not implemented yet"); break;
+       	case 0x3: printf("0x3 not implemented yet"); break;
+       	case 0x4: printf("0x4 not implemented yet"); break;
+       	case 0x5: printf("0x5 not implemented yet"); break;
+       	case 0x6: printf("0x6 not implemented yet"); break;
+       	case 0x7: printf("0x7 not implemented yet"); break;
+       	case 0x8: printf("0x8 not implemented yet"); break;
+       	case 0x9: printf("0x9 not implemented yet"); break;
+       	case 0xA: printf("0xA not implemented yet"); break;
+       	case 0xB: printf("0xB not implemented yet"); break;
+       	case 0xC: printf("0xC not implemented yet"); break;
+       	case 0xD: printf("0xD not implemented yet"); break;
+       	case 0xE: printf("0xE not implemented yet"); break;
+       	case 0xF: printf("0xF not implemented yet"); break;
+       	default: break;
+    }
 }
