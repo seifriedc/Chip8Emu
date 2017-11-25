@@ -83,7 +83,7 @@ void disInstruction(int pc, unsigned char* buf)
        	case 0x8: printf("0x8 not implemented yet"); break;
        	case 0x9: printf("%s V%X, V%X", "SKP.NEQ", (inst>>2 & 0x0F), (inst>>1 & 0x000F)); break;
         case 0xA: printf("%s I, 0x%03x", "MOVI", (inst & 0x0FFF)); break;
-       	case 0xB: printf("0xB not implemented yet"); break;
+        case 0xB: printf("%s 0x%03x(V0)", "JA", (inst & 0x0FFF)); break;
        	case 0xC: printf("0xC not implemented yet"); break;
        	case 0xD: printf("0xD not implemented yet"); break;
        	case 0xE: printf("0xE not implemented yet"); break;
