@@ -59,7 +59,7 @@ void disInstruction(int pc, unsigned char* buf)
     uint8_t top = (inst >> 12);                 // Get top half-byte
 
     // Print address and op
-    printf("%04x %04x ", pc, inst);
+    printf("%04x %-10x ", pc, inst);
 
     // Act on op
     switch (top)
@@ -67,9 +67,9 @@ void disInstruction(int pc, unsigned char* buf)
     	case 0x0:
             switch (inst & 0x00FF)
             {
-               	case 0xE0: printf("%-10s", "CLRSCREEN"); break;
-               	case 0xEE: printf("%-10s", "RET"); break;
-                case 0x00: printf("%-10s", "NOP"); break;
+               	case 0xE0: printf("%s", "CLRSCREEN"); break;
+               	case 0xEE: printf("%s", "RET"); break;
+                case 0x00: printf("%s", "NOP"); break;
                	default:   printf("ERROR 0x0 OP"); break;
             }
             break;
@@ -78,8 +78,8 @@ void disInstruction(int pc, unsigned char* buf)
        	case 0x3: printf("0x3 not implemented yet"); break;
        	case 0x4: printf("0x4 not implemented yet"); break;
        	case 0x5: printf("0x5 not implemented yet"); break;
-       	case 0x6: printf("0x6 not implemented yet"); break;
-       	case 0x7: printf("0x7 not implemented yet"); break;
+        case 0x6: printf("%s V%X, %#02x", "MOVI", (inst>>2 & 0x0F), (inst & 0x00FF)); break;
+        case 0x7: printf("%s V%X, %#02x", "ADDI", (inst>>2 & 0x0F), (inst & 0x00FF)); break;
        	case 0x8: printf("0x8 not implemented yet"); break;
        	case 0x9: printf("0x9 not implemented yet"); break;
        	case 0xA: printf("0xA not implemented yet"); break;
