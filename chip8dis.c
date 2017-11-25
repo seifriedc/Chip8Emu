@@ -84,8 +84,8 @@ void disInstruction(int pc, unsigned char* buf)
        	case 0x9: printf("%s V%X, V%X", "SKP.NEQ", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
         case 0xA: printf("%s I, 0x%03x", "MOVI", (inst & 0x0FFF)); break;
         case 0xB: printf("%s 0x%03x(V0)", "JA", (inst & 0x0FFF)); break;
-        case 0xC: printf("%s V%1X, 0x%02x", "MOV.RAND", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-       	case 0xD: printf("0xD not implemented yet"); break;
+        case 0xC: printf("%s V%X, 0x%02x", "MOV.RAND", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+    case 0xD: printf("%s V%X, V%X, %#x", "DRAW", (inst>>8 & 0x0F), (inst>>4 & 0x00F), (inst & 0x000F)); break;
        	case 0xE: printf("0xE not implemented yet"); break;
        	case 0xF: printf("0xF not implemented yet"); break;
        	default: break;
