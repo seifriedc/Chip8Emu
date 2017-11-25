@@ -75,7 +75,7 @@ void disInstruction(int pc, unsigned char* buf)
             break;
         case 0x1: printf("%s 0x%03x", "JA", (inst & 0x0FFF)); break;
         case 0x2: printf("%s (0x%03x)", "CALL", (inst & 0x0FFF)); break;
-       	case 0x3: printf("0x3 not implemented yet"); break;
+        case 0x3: printf("%s V%X, 0x%02x", "SKP.EQ", (inst>>2 & 0x0F), (inst & 0x00FF)); break;
        	case 0x4: printf("0x4 not implemented yet"); break;
        	case 0x5: printf("0x5 not implemented yet"); break;
         case 0x6: printf("%s V%X, 0x%02x", "MOVI", (inst>>2 & 0x0F), (inst & 0x00FF)); break;
