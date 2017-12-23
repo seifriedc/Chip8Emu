@@ -1,14 +1,18 @@
 // Chris Seifried
 // CHIP-8 Disassembler
 
-// NOTE: ROMS are in the Public Domain and are free
-// 	 to use, modify, and distribute.
-
-// NOTE: use "od -tx1 <file>" to dump rom contents
+// NOTES: - ROMS are in the Public Domain and are free
+// 	        to use, modify, and distribute.
+//        - Use "od -tx1 <file>" to dump rom contents
+//        - Instruction info is based off of documentation found on Wikipedia
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+// Traditionally, the CHIP-8 interpreter occupied the first 512 (0x200) bytes
+// of the memory space. So roms are loaded at this address
+#define ROM_START 0x200
 
 void disInstruction(int pc, unsigned char* buf);
 
@@ -22,24 +26,23 @@ int main(int argc, char** argv) {
     }
 
     // Get rom file size
-    int size;
+    long size;
     fseek(f, 0, SEEK_END);
     size = ftell(f);
     fseek(f, 0, SEEK_SET);
 
     // Allocate memory for rom
-    unsigned char* buffer = malloc(size+0x200);
+    unsigned char* buffer = malloc(size + ROM_START);
 
-    // Read rom into memory starting at 0x200
-    // CHIP-8 puts roms in memory at 0x200
-    fread(buffer+0x200, size, 1, f);
+    // Read rom into memory starting at address 0x200
+    fread(buffer + ROM_START, size, 1, f);
     fclose(f);
 
     // Program counter
-    int pc = 0x200;
+    int pc = ROM_START;
 
     // Disassemble instructions in rom
-    while (pc < (size + 0x200))
+    while (pc < (size + ROM_START))
     {
         // Disassemble next instruction
         disInstruction(pc, buffer);
@@ -64,30 +67,29 @@ void disInstruction(int pc, unsigned char* buf)
     // Act on op
     switch (top)
     {
-    	case 0x0:
+        case 0x0:
             switch (inst & 0x00FF)
             {
-               	case 0xE0: printf("%s", "CLRSCREEN"); break;
-               	case 0xEE: printf("%s", "RET"); break;
+                case 0xE0: printf("%s", "CLRSCREEN"); break;
+                case 0xEE: printf("%s", "RET"); break;
                 case 0x00: printf("%s", "NOP"); break;
-               	default:   printf("UNKNOWN 0x0 OP"); break;
-            }
-            break;
-        case 0x1: printf("%s 0x%03x", "JA", (inst & 0x0FFF)); break;
+                default:   printf("UNKNOWN 0x0 OP"); break;
+            } break;
+        case 0x1: printf("%s 0x%03x", "JA", (inst & 0x0FFF));break;
         case 0x2: printf("%s (0x%03x)", "CALL", (inst & 0x0FFF)); break;
         case 0x3: printf("%s V%X, 0x%02x", "SKP.EQ", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-       	case 0x4: printf("%s V%X, 0x%02x", "SKP.NEQ", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-       	case 0x5: printf("%s V%X, V%X", "SKP.EQ", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+        case 0x4: printf("%s V%X, 0x%02x", "SKP.NEQ", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x5: printf("%s V%X, V%X", "SKP.EQ", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
         case 0x6: printf("%s V%X, 0x%02x", "MOVI", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
         case 0x7: printf("%s V%X, 0x%02x", "ADDI", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-       	case 0x8: printf("0x8 not implemented yet"); break;
-       	case 0x9: printf("%s V%X, V%X", "SKP.NEQ", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+        case 0x8: printf("0x8 not implemented yet"); break;
+        case 0x9: printf("%s V%X, V%X", "SKP.NEQ", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
         case 0xA: printf("%s I, 0x%03x", "MOVI", (inst & 0x0FFF)); break;
         case 0xB: printf("%s 0x%03x(V0)", "JA", (inst & 0x0FFF)); break;
         case 0xC: printf("%s V%X, 0x%02x", "MOV.RAND", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-    case 0xD: printf("%s V%X, V%X, %#x", "DRAW", (inst>>8 & 0x0F), (inst>>4 & 0x00F), (inst & 0x000F)); break;
-       	case 0xE: printf("0xE not implemented yet"); break;
-       	case 0xF: printf("0xF not implemented yet"); break;
-       	default: break;
+        case 0xD: printf("%s V%X, V%X, %#x", "DRAW", (inst>>8 & 0x0F), (inst>>4 & 0x00F), (inst & 0x000F)); break;
+        case 0xE: printf("0xE not implemented yet"); break;
+        case 0xF: printf("0xF not implemented yet"); break;
+        default: break;
     }
 }
