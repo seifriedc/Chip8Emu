@@ -12,6 +12,7 @@ public:
 private:
     char callstack [48]; // Allows for 24 nested calls
     char vregs [16];     // V registers
+    bool keys [16];      // Keys are 1-15 inclusive
     unsigned short ireg; // I register
 
     void getInput();

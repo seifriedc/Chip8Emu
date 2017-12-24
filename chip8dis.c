@@ -70,24 +70,37 @@ void disInstruction(int pc, unsigned char* buf)
         case 0x0:
             switch (inst & 0x00FF)
             {
-                case 0xE0: printf("%s", "CLRSCREEN"); break;
+                case 0xE0: printf("%s", "CLS"); break;
                 case 0xEE: printf("%s", "RET"); break;
                 case 0x00: printf("%s", "NOP"); break;
                 default:   printf("UNKNOWN 0x0 OP"); break;
             } break;
-        case 0x1: printf("%s 0x%03x", "JA", (inst & 0x0FFF));break;
+        case 0x1: printf("%s 0x%03x", "JP", (inst & 0x0FFF));break;
         case 0x2: printf("%s (0x%03x)", "CALL", (inst & 0x0FFF)); break;
-        case 0x3: printf("%s V%X, 0x%02x", "SKP.EQ", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-        case 0x4: printf("%s V%X, 0x%02x", "SKP.NEQ", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-        case 0x5: printf("%s V%X, V%X", "SKP.EQ", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
-        case 0x6: printf("%s V%X, 0x%02x", "MOVI", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-        case 0x7: printf("%s V%X, 0x%02x", "ADDI", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-        case 0x8: printf("0x8 not implemented yet"); break;
-        case 0x9: printf("%s V%X, V%X", "SKP.NEQ", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
-        case 0xA: printf("%s I, 0x%03x", "MOVI", (inst & 0x0FFF)); break;
-        case 0xB: printf("%s 0x%03x(V0)", "JA", (inst & 0x0FFF)); break;
-        case 0xC: printf("%s V%X, 0x%02x", "MOV.RAND", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
-        case 0xD: printf("%s V%X, V%X, %#x", "DRAW", (inst>>8 & 0x0F), (inst>>4 & 0x00F), (inst & 0x000F)); break;
+        case 0x3: printf("%s V%X, 0x%02x", "SE", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x4: printf("%s V%X, 0x%02x", "SNE", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x5: printf("%s V%X, V%X", "SE", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+        case 0x6: printf("%s V%X, 0x%02x", "LD", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x7: printf("%s V%X, 0x%02x", "ADD", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x8:
+            switch (inst & 0x000F)
+            {
+                case 0x0: printf("%s V%X, V%X", "LD", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x1: printf("%s V%X, V%X", "OR", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x2: printf("%s V%X, V%X", "AND", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x3: printf("%s V%X, V%X", "XOR", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x4: printf("%s V%X, V%X", "ADD", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x5: printf("%s V%X, V%X", "SUB", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x6: printf("%s V%X, V%X", "SHR", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x7: printf("%s V%X, V%X", "SUBN", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0xE: printf("%s V%X, V%X", "SHL", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                default:  printf("UNKNOWN 0x0 OP"); break;
+            } break;
+        case 0x9: printf("%s V%X, V%X", "SNE", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+        case 0xA: printf("%s I, 0x%03x", "LD", (inst & 0x0FFF)); break;
+        case 0xB: printf("%s 0x%03x(V0)", "JP", (inst & 0x0FFF)); break;
+        case 0xC: printf("%s V%X, 0x%02x", "RND", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0xD: printf("%s V%X, V%X, %#x", "DRW", (inst>>8 & 0x0F), (inst>>4 & 0x00F), (inst & 0x000F)); break;
         case 0xE: printf("0xE not implemented yet"); break;
         case 0xF: printf("0xF not implemented yet"); break;
         default: break;
