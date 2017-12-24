@@ -1,4 +1,5 @@
 // Chris Seifried
+// Constantino Flouras
 // CHIP-8 Disassembler
 
 // NOTES: - ROMS are in the Public Domain and are free
