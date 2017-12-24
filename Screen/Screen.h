@@ -18,6 +18,7 @@ class Screen
 	public:
 		Screen();
 		void drawPixel(int x, int y);
+		void clearScreen();
 		
 	private:
 		bool init();

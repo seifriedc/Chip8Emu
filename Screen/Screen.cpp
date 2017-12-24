@@ -53,3 +53,17 @@ void Screen::drawPixel(int x, int y)
 	SDL_RenderDrawPoint(gRenderer, x, y);
 	SDL_RenderPresent(gRenderer);
 }
+
+void Screen::clearScreen()
+{
+	struct SDL_Rect blackBackground;
+	blackBackground.x=0;
+	blackBackground.y=0;
+	blackBackground.w=SCREEN_WIDTH;
+	blackBackground.h=SCREEN_HEIGHT;
+
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect( gRenderer, &blackBackground);
+	SDL_RenderPresent(gRenderer);
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+}
