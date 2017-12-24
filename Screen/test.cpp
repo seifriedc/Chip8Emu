@@ -5,18 +5,17 @@ int main()
 {
 	Screen screen;
 
-	while(1)
-	{
-		for (int i = 0; i < SCREEN_WIDTH; i++)
-		{
-			if (i == 50)
-			{
-				screen.clearScreen();
-			}
 
-			screen.drawPixel(i,SCREEN_HEIGHT/2);
-			SDL_Delay(1);
-		}
+	SDL_Delay(1000);
+
+	for (int i = 0; i < SCREEN_WIDTH; i++)
+	{
+		screen.buffer[i][SCREEN_HEIGHT/2] = 1;
+		screen.blit();
+
+		SDL_Delay(10);
 	}
+
+	SDL_Delay(1000);
 	return 0;
 }
