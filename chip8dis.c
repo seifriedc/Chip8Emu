@@ -94,15 +94,34 @@ void disInstruction(int pc, unsigned char* buf)
                 case 0x6: printf("%s V%X, V%X", "SHR", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
                 case 0x7: printf("%s V%X, V%X", "SUBN", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
                 case 0xE: printf("%s V%X, V%X", "SHL", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
-                default:  printf("UNKNOWN 0x0 OP"); break;
+                default:  printf("UNKNOWN 0x8 OP"); break;
             } break;
         case 0x9: printf("%s V%X, V%X", "SNE", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
         case 0xA: printf("%s I, 0x%03x", "LD", (inst & 0x0FFF)); break;
         case 0xB: printf("%s 0x%03x(V0)", "JP", (inst & 0x0FFF)); break;
         case 0xC: printf("%s V%X, 0x%02x", "RND", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
         case 0xD: printf("%s V%X, V%X, %#x", "DRW", (inst>>8 & 0x0F), (inst>>4 & 0x00F), (inst & 0x000F)); break;
-        case 0xE: printf("0xE not implemented yet"); break;
-        case 0xF: printf("0xF not implemented yet"); break;
+        case 0xE:
+            switch (inst & 0x00FF)
+            {
+                case 0x9E: printf("%s V%X", "SKP", (inst>>8 & 0x0F)); break;
+                case 0xA1: printf("%s V%X", "SKNP", (inst>>8 & 0x0F)); break;
+                default:   printf("UNKNOWN 0xE OP"); break;
+            } break;
+        case 0xF:
+            switch (inst & 0x00FF)
+            {
+                case 0x07: printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "DT"); break;
+                case 0x0A: printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "K"); break;
+                case 0x15: printf("%s %s, V%X", "LD", "DT", (inst>>8 & 0x0F)); break;
+                case 0x18: printf("%s %s, V%X", "LD", "ST", (inst>>8 & 0x0F)); break;
+                case 0x1E: printf("%s %s, V%X", "ADD", "I", (inst>>8 & 0x0F)); break;
+                case 0x29: printf("%s %s, V%X", "LD", "F", (inst>>8 & 0x0F)); break;
+                case 0x33: printf("%s %s, V%X", "LD", "B", (inst>>8 & 0x0F)); break;
+                case 0x55: printf("%s %s, V%X", "LD", "(I)", (inst>>8 & 0x0F)); break;
+                case 0x65: printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "(I)"); break;
+                default:  printf("UNKNOWN 0xF OP"); break;
+            } break;
         default: break;
     }
 }
