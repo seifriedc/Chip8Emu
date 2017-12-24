@@ -3,14 +3,17 @@
 
 #include "CHIP8Cpu.h"
 
-void CHIP8Cpu::getInput() {
+void CHIP8Cpu::getInput()
+{
 
 }
 
-void CHIP8Cpu::nextInstruction() {
-
+void CHIP8Cpu::nextInstruction()
+{
+	
 }
 
-void CHIP8Cpu::render() {
-
+void CHIP8Cpu::render()
+{
+	
 }

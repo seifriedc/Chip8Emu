@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
     // Open the ROM, initialize the CPU
     CHIP8Cpu chip8 (argv[1]);
 
+    //cout << "DEBUG: Entering emulation loop..." << endl;
     while (true) {
         chip8.getInput();
         chip8.nextInstruction();
