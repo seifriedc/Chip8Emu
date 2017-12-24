@@ -12,23 +12,18 @@ using namespace std;
 
 class CHIP8Cpu {
 public:
-    explicit CHIP8Cpu(const char *romname) {
-        rom.open(romname);
-        if (rom.fail()) {
-            cout << "Error opening file " << romname << ", aborting." << endl;
-            abort();
-        }
-    }
-
+    explicit CHIP8Cpu(const char *romname);
+    ~CHIP8Cpu();
     void getInput();
     void nextInstruction();
     void render();
 
 private:
-    char callstack [48] {};     // Allows for 24 nested calls
-    char vregs [16] {};         // V registers
-    bool keys [16] {false};     // Keys are 1-15 inclusive
-    unsigned short ireg {0};    // I register
+    int pc = {0x200};           // Program counter
+    char callstack [48] = {};   // Allows for 24 nested calls
+    char vregs [16] = {};       // V registers
+    bool keys [16] = {false};   // Keys are 1-15 inclusive
+    unsigned short ireg  = {0}; // I register
     ifstream rom;               // Input stream for the ROM file
 };
 

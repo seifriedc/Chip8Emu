@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
     unsigned char* buffer = malloc(size + ROM_START);
 
     // Read rom into memory starting at address 0x200
+    // Not really necessary
     fread(buffer + ROM_START, size, 1, f);
     fclose(f);
 
