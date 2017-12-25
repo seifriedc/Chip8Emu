@@ -1,12 +1,12 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = CHIP8Cpu.cpp CHIP8Emu.cpp
+OBJS = CHIP8Cpu.cpp CHIP8Emu.cpp Screen/Screen.cpp
 
 #CC specifies which compiler we're using
 CC = g++
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -w
+COMPILER_FLAGS = -w -Wall -std=c++11
 
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = -lSDL2

@@ -11,6 +11,10 @@
 #include <string>
 #include <random>
 #include <SDL2/SDL.h>
+
+// Screen functionality
+#include "Screen/Screen.h";
+
 using namespace std;
 
 typedef mt19937 RNG;
@@ -42,6 +46,9 @@ private:
 
     // Memory
     unsigned char memory[4096]; // 4K of memory
+
+    // Screen
+    Screen screen;
 };
 
 #endif //CHIP8EMU_CHIP8CPU_H

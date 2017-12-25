@@ -3,6 +3,9 @@
 
 #include "CHIP8Cpu.h"
 
+// For debugging purposes...
+#include <stdio.h>
+
 CHIP8Cpu::CHIP8Cpu(const char *romname) {
     ifstream rom;   // Input stream for the ROM file
 
@@ -45,6 +48,10 @@ void CHIP8Cpu::getInput() {
 }
 
 void CHIP8Cpu::nextInstruction() {
+    // Debug flag
+    #define DEBUG_CHIP8CPU_NEXTINSTRUCTION
+
+
     unsigned short tmp, inst, top;     // For reading in the instruction
     int vx, vy, arg;                   // Regs and immediate value in instruction, if present
 
@@ -57,6 +64,10 @@ void CHIP8Cpu::nextInstruction() {
     vy = inst>>4 & 0x000F;
     arg = inst & 0x00FF;
 
+    // Some debug statements:
+    #ifdef DEBUG_CHIP8CPU_NEXTINSTRUCTION
+    	//cout << "DEBUG_CHIP8CPU_NEXTINSTRUCTION: $pc is: " << pc << endl;
+    #endif
     // Select parse actions based on top half-byte of instruction
     switch (top)
     {
@@ -132,6 +143,7 @@ void CHIP8Cpu::nextInstruction() {
             break;
         case 0xA: // LD I, addr
             I = inst & 0x0FFF;
+            cout << "DEBUG_CHIP8CPU_NEXTINSTRUCTION: Memory address I points to byte: " << I << endl;
             break;
         case 0xB: // JP V0, addr
             pc = vregs[0] + (inst & 0x0FFF);
@@ -140,6 +152,34 @@ void CHIP8Cpu::nextInstruction() {
             vregs[vx] = dist(rng) & (inst & 0x00FF);
             break;
         case 0xD: // DRW Vx, Vy, nibble
+        	
+        	// Implement the draw functionality. We'll need to use a screen.
+
+        	// We'll pull the actual "bitmap" of the graphic from location I
+        	// in memory. In our case, we'll simply iterate through location I.
+        	cout << "DRAW: " << endl;
+        	vx = (inst & 0x0F00) >> 8;
+        	vy = (inst & 0x00F0) >> 4;
+        	arg = (inst & 0x000F);
+
+        	for (int cnt = 0; cnt < arg; cnt++)
+        	{
+        		#ifdef DEBUG_CHIP8CPU_NEXTINSTRUCTION
+        			if (cnt % 8 == 0)
+						printf("DEBUG: At memory location %d, the byte is %x.\n", I, memory[I]);
+    			#endif
+        		if ( memory[(I) + (cnt/8)] >> (7 - (cnt % 8) == 1) )
+        		{
+        			screen.buffer[vx + cnt%8][vy + cnt/8] = 1;
+        		}
+        		else
+        		{
+        			screen.buffer[vx + cnt%8][vy + cnt/8] = 0;
+        		}
+        	}
+
+        	screen.blit();
+
             break;
         case 0xE:
             switch (inst & 0x00FF)
@@ -154,6 +194,9 @@ void CHIP8Cpu::nextInstruction() {
             } break;
 
         // TODO: Finish 0xF and draw instructions
+
+
+
 
         default: break;
     }
