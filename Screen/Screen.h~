@@ -1,4 +1,4 @@
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <stdio.h>
 
 #ifndef SCREEN_H
@@ -13,21 +13,15 @@ const int SCREEN_HEIGHT = 32;
 
 class Screen
 {
-
-	// The screen buffer will represent every pixel on the display.
-	// If the value at a specified X and Y is 0, the pixel is not set, any other value than 0, it is.
 	SDL_Window* gWindow = NULL;
 	SDL_Renderer* gRenderer = NULL;
 	public:
-		char buffer[SCREEN_WIDTH][SCREEN_HEIGHT];
 		Screen();
 		void drawPixel(int x, int y);
-		void blit();
 		void clearScreen();
 		
 	private:
 		bool init();
-		void fillBuffer(int i);
 };
 
 

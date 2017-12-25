@@ -4,12 +4,36 @@
 #include "CHIP8Cpu.h"
 
 CHIP8Cpu::CHIP8Cpu(const char *romname) {
+    ifstream rom;   // Input stream for the ROM file
+
     // Open the ROM file
     rom.open(romname);
     if (rom.fail()) {
         cout << "Error opening file " << romname << ", aborting." << endl;
         abort();
     }
+
+    // Now, we need the ROM file size.
+    long romSize = rom.tellg();
+    rom.seekg( 0, ios::end );
+    romSize = rom.tellg() - romSize;
+    rom.seekg( 0, ios::beg );
+
+    // Read the entirety of the ROM file into memory.
+
+    /*
+        About the CHIP-8 Memory Map
+        ---------------------------
+
+        Starting at address 0x200 (or 512 in decimal), memory space contains the
+        ROM that was inputted by the user.
+    */
+
+    char * romStart = (char *) &memory[ROM_START];
+    rom.read(romStart, romSize);
+
+    // The ROM is now in memory. Close the ROM.
+    rom.close();
 
     // Set up random number generation
     random_device rd;
@@ -24,9 +48,9 @@ void CHIP8Cpu::nextInstruction() {
     unsigned short tmp, inst, top;     // For reading in the instruction
     int vx, vy, arg;                   // Regs and immediate value in instruction, if present
 
-    rom >> tmp;                        // Read in next instruction
-    inst = (tmp >> 8) | (tmp << 8);    // Flip endianness
-    top = (inst >> 12);                // Get top half-byte
+    tmp = ((unsigned short *) memory)[pc]; // Read in next instruction (2 bytes)
+    inst = (tmp >> 8) | (tmp << 8);        // Flip endianness
+    top = (inst >> 12);                    // Get top half-byte
 
     // By default
     vx = inst>>8 & 0x0F;
@@ -107,7 +131,7 @@ void CHIP8Cpu::nextInstruction() {
             if (vregs[vx] != vregs[vy]) pc += 2;
             break;
         case 0xA: // LD I, addr
-            ireg = inst & 0x0FFF;
+            I = inst & 0x0FFF;
             break;
         case 0xB: // JP V0, addr
             pc = vregs[0] + (inst & 0x0FFF);
@@ -141,6 +165,4 @@ void CHIP8Cpu::render() {
 
 }
 
-CHIP8Cpu::~CHIP8Cpu() {
-    rom.close();
-}
+CHIP8Cpu::~CHIP8Cpu() = default;

@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     // Open the ROM, initialize the CPU
     CHIP8Cpu chip8 (argv[1]);
 
-    while (!chip8.rom.eof()) {
+    while (true) {
         chip8.getInput();
         chip8.nextInstruction();
         chip8.render();

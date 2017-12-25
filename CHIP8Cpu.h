@@ -4,6 +4,8 @@
 #ifndef CHIP8EMU_CHIP8CPU_H
 #define CHIP8EMU_CHIP8CPU_H
 
+#define ROM_START 0x200
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -17,21 +19,29 @@ class CHIP8Cpu {
 public:
     explicit CHIP8Cpu(const char *romname);
     ~CHIP8Cpu();
+
     void getInput();
     void nextInstruction();
     void render();
-    ifstream rom;               // Input stream for the ROM file
-    RNG rng;
-    uniform_int_distribution<int> dist {0,255};
 
+    RNG rng;        // Random number gen engine
+    uniform_int_distribution<int> dist {0,255}; // Distribution for RNG
 
 private:
-    int pc = 0x200;             // Program counter
+    // Stack
     int sp = 0;                 // Stack pointer
     int callstack[48] = {};     // Allows for 24 nested calls
+
+    // Registers
     int vregs[16] = {};         // V registers
+    int I = 0;                  // I register
+    int pc = 0x200;             // Program counter
+
+    // Input
     bool keys[16] = {false};    // Keys are 1-15 inclusive
-    int ireg = 0;               // I register
+
+    // Memory
+    unsigned char memory[4096]; // 4K of memory
 };
 
 #endif //CHIP8EMU_CHIP8CPU_H

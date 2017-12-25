@@ -27,17 +27,28 @@ bool Screen::init()
 	// Then, we'll create the renderer.
 	gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
 
-	// We need to fill the screen with black
+	/*
+		Originally, I viewed the CHIP-8 display as something of which the display itself would be black,
+		and the pixels when triggered would be white. For the sake of simplicity of code (and testing),
+		I'm going to simply use a white background with black activated pixels.
+	*/
 
+	// Initialize the buffer
+	fillBuffer(0);
+
+	/*
 	struct SDL_Rect blackBackground;
 	blackBackground.x=0;
 	blackBackground.y=0;
 	blackBackground.w=SCREEN_WIDTH;
 	blackBackground.h=SCREEN_HEIGHT;
-
+	
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 	SDL_RenderFillRect( gRenderer, &blackBackground);
 	SDL_RenderPresent(gRenderer);
+	*/
+
+	blit();
 
 	// Since the CHIP-8 screen is only capable of black and white colors,
 	// we will restrict our drawing ability to WHITE pixels only.
@@ -66,4 +77,40 @@ void Screen::clearScreen()
 	SDL_RenderFillRect( gRenderer, &blackBackground);
 	SDL_RenderPresent(gRenderer);
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+}
+
+void Screen::blit()
+{
+	// Clear the renderer of whatever might have been there before.
+	SDL_RenderClear(gRenderer);
+
+	for (int y = 0; y < SCREEN_HEIGHT; y++)
+	{
+		for (int x = 0; x < SCREEN_WIDTH; x++)
+		{
+			if (buffer[x][y] != 0)
+			{
+				// Pixel is in use, so therefore, we'll need to change the color to BLACK.
+				SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+			}
+			else
+			{
+				// The pixel is not in use. We'll draw WHITE onto this pixel then.
+				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+			}
+			SDL_RenderDrawPoint(gRenderer, x, y);
+		}
+	}
+	SDL_RenderPresent(gRenderer);
+}
+
+void Screen::fillBuffer(int i)
+{
+	for (int y = 0; y < SCREEN_HEIGHT; y++)
+	{
+		for (int x = 0; x < SCREEN_WIDTH; x++)
+		{
+			buffer[x][y] = i;
+		}
+	}
 }
