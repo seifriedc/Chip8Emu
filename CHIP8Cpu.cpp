@@ -32,8 +32,13 @@ CHIP8Cpu::CHIP8Cpu(const char *romname) {
         ROM that was inputted by the user.
     */
 
-    char * romStart = (char *) &memory[ROM_START];
+    char * romStart = (char *) ( &(memory[ROM_START]));
     rom.read(romStart, romSize);
+
+	printf("The starting memory byte (instruction) contains: %x.\n", memory[ROM_START]);
+    printf("The starting memory byte (instruction) contains: %x.\n", memory[ROM_START+1]);
+
+
 
     // The ROM is now in memory. Close the ROM.
     rom.close();
@@ -64,7 +69,7 @@ CHIP8Cpu::CHIP8Cpu(const char *romname) {
 	};
 
 	//		Destination of the font
-	memcpy( (char *) &memory[ROM_START], (char *) &chip8_fontset[0], 80);
+	memcpy( (char *) &memory[0x050], (char *) &chip8_fontset[0], 80);
 }
 
 void CHIP8Cpu::getInput() {
@@ -81,8 +86,17 @@ void CHIP8Cpu::nextInstruction() {
     unsigned short tmp, inst, top;     // For reading in the instruction
     int vx, vy, arg;                   // Regs and immediate value in instruction, if present
 
-    tmp = ((unsigned short *) memory)[pc]; // Read in next instruction (2 bytes)
-    inst = (tmp >> 8) | (tmp << 8);        // Flip endianness
+    //printf("The program counter is: %x\n", pc);
+
+    // Chris-- originally, you had this line similar to how it is in chip8dis.c, but it was not working.
+    // I modified it to be the following and it appears to have fixed the issue... not sure if its the most efficient however.
+    // Please take a look at this if you can.
+    tmp = (memory[pc] << 8) | memory[pc+1]; // Read in next instruction (2 bytes)
+
+    //printf("tmp is equal to: %x\n", tmp);
+
+    // Also, simply because of the way I fixed tmp, we don't need to flip the endianness
+    inst = tmp;						       // no need to flip the endianness
     top = (inst >> 12);                    // Get top half-byte
 
     // By default
@@ -92,7 +106,7 @@ void CHIP8Cpu::nextInstruction() {
 
     #ifdef DEBUG_PRINT_INSTRUCTION
     	disInstruction(pc,inst);
-    	screen.delay(100);
+    	//screen.delay(100);
     #endif
 
     // If the program counter is less than the start of the ROM, something has gone wrong, and we should throw an exception.
@@ -101,11 +115,6 @@ void CHIP8Cpu::nextInstruction() {
     	printf("ERROR: An invalid program counter %x was detected!\n", pc);
     	abort();
     }
-
-
-
-
-
 
     // Select parse actions based on top half-byte of instruction
     switch (top)
@@ -124,7 +133,8 @@ void CHIP8Cpu::nextInstruction() {
             }
             break;
         case 0x1: // JP addr
-            pc = inst & 0x0FFF; // Set $pc to jump addr
+        	// In an unconditional jump, I'm pretty sure that the address also has to be offset by the program counter increment value (in this case, 2)
+            pc = inst & 0x0FFF + (-2); // Set $pc to jump addr
             break;
         case 0x2: // CALL addr
             callstack[++sp] = pc; // Increment $sp, push current $pc to top of stack
@@ -182,7 +192,7 @@ void CHIP8Cpu::nextInstruction() {
             break;
         case 0xA: // LD I, addr
             I = inst & 0x0FFF;
-            cout << "DEBUG_CHIP8CPU_NEXTINSTRUCTION: Memory address I points to byte: " << I << endl;
+            //cout << "DEBUG_CHIP8CPU_NEXTINSTRUCTION: Memory address I points to byte: " << I << endl;
             break;
         case 0xB: // JP V0, addr
             pc = vregs[0] + (inst & 0x0FFF);
@@ -229,15 +239,62 @@ void CHIP8Cpu::nextInstruction() {
                     break;
                 default: break;
             } break;
+        case 0xF: // TODO: Finish 0xF and draw instructions
+        	switch (inst & 0x00FF)
+            {
+                case 0x07:
+                // Load the value from delay_timer into V(inst & 0x0F00);
+                vregs[vx] = delay_timer;
+                break;
 
-        // TODO: Finish 0xF and draw instructions
+                case 0x0A: 
+                //printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "K");
 
+                break;
 
+                case 0x15:
+                //printf("%s %s, V%X", "LD", "DT", (inst>>8 & 0x0F));
+                // Load the value in (inst & 0x0F00) into delay_timer;
+                delay_timer = (inst & 0x0F00);
+                break;
 
+                case 0x18:
+                //printf("%s %s, V%X", "LD", "ST", (inst>>8 & 0x0F));
+                break;
 
+                case 0x1E:
+                //printf("%s %s, V%X", "ADD", "I", (inst>>8 & 0x0F));
+                break;
+
+                case 0x29:
+                //printf("%s %s, V%X", "LD", "F", (inst>>8 & 0x0F));
+                break;
+
+                case 0x33:
+                //printf("%s %s, V%X", "LD", "B", (inst>>8 & 0x0F));
+                break;
+
+                case 0x55:
+                //printf("%s %s, V%X", "LD", "(I)", (inst>>8 & 0x0F));
+                break;
+
+                case 0x65:
+                //printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "(I)");
+                break;
+
+                default:
+                //printf("UNKNOWN 0xF OP");
+                break;
+            } break;
         default: break;
     }
     pc += 2;
+
+    // Handle the delay and sound timers.
+    if (delay_timer > 0)
+    {
+    	delay_timer--;
+    }
 }
 
 void CHIP8Cpu::render() {

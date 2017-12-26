@@ -27,7 +27,6 @@ public:
     void getInput();
     void nextInstruction();
     void render();
-    void delay(int seconds);
 
     RNG rng;        // Random number gen engine
     uniform_int_distribution<int> dist {0,255}; // Distribution for RNG
@@ -48,6 +47,10 @@ private:
     // Memory
     unsigned char memory[4096]; // 4K of memory
 
+    // Timers
+    unsigned char delay_timer;
+    unsigned char sound_timer;
+    
     // Screen
     Screen screen;
 };

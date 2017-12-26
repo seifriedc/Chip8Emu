@@ -8,7 +8,7 @@ Screen::Screen()
 {
 	// Start the initialization process
 	if (init());
-		printf("DEBUG_SCREEN: The screen has been successfully initialized.");
+		printf("DEBUG_SCREEN: The screen has been successfully initialized.\n");
 }
 
 bool Screen::init()
