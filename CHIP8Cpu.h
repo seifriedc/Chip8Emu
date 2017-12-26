@@ -27,6 +27,7 @@ public:
     void getInput();
     void nextInstruction();
     void render();
+    void delay(int seconds);
 
     RNG rng;        // Random number gen engine
     uniform_int_distribution<int> dist {0,255}; // Distribution for RNG

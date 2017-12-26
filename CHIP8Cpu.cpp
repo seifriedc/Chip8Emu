@@ -41,16 +41,42 @@ CHIP8Cpu::CHIP8Cpu(const char *romname) {
     // Set up random number generation
     random_device rd;
     rng.seed(rd());
+
+    // Next, we'll need to import the standard font into memory. This is freely provided 
+    unsigned char chip8_fontset[80] =
+	{ 
+	  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+	  0x20, 0x60, 0x20, 0x20, 0x70, // 1
+	  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+	  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+	  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+	  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+	  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+	  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+	  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+	  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+	  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+	  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+	  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+	  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+	  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+	  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+	};
+
+	//		Destination of the font
+	memcpy( (char *) &memory[ROM_START], (char *) &chip8_fontset[0], 80);
 }
 
 void CHIP8Cpu::getInput() {
 
 }
 
+void disInstruction(int pc, unsigned short inst);
+
 void CHIP8Cpu::nextInstruction() {
     // Debug flag
     #define DEBUG_CHIP8CPU_NEXTINSTRUCTION
-
+    #define DEBUG_PRINT_INSTRUCTION
 
     unsigned short tmp, inst, top;     // For reading in the instruction
     int vx, vy, arg;                   // Regs and immediate value in instruction, if present
@@ -64,10 +90,23 @@ void CHIP8Cpu::nextInstruction() {
     vy = inst>>4 & 0x000F;
     arg = inst & 0x00FF;
 
-    // Some debug statements:
-    #ifdef DEBUG_CHIP8CPU_NEXTINSTRUCTION
-    	//cout << "DEBUG_CHIP8CPU_NEXTINSTRUCTION: $pc is: " << pc << endl;
+    #ifdef DEBUG_PRINT_INSTRUCTION
+    	disInstruction(pc,inst);
+    	screen.delay(100);
     #endif
+
+    // If the program counter is less than the start of the ROM, something has gone wrong, and we should throw an exception.
+    if (pc < ROM_START)
+    {
+    	printf("ERROR: An invalid program counter %x was detected!\n", pc);
+    	abort();
+    }
+
+
+
+
+
+
     // Select parse actions based on top half-byte of instruction
     switch (top)
     {
@@ -198,12 +237,86 @@ void CHIP8Cpu::nextInstruction() {
 
         default: break;
     }
-
     pc += 2;
 }
 
 void CHIP8Cpu::render() {
 
 }
+
+void disInstruction(int pc, unsigned short inst)
+{
+    uint8_t top = (inst >> 12);                 // Get top half-byte
+
+    // Print address and op
+    printf("%04x %04x    ", pc, inst);
+
+    // Act on op
+    switch (top)
+    {
+        case 0x0:
+            switch (inst & 0x00FF)
+            {
+                case 0xE0: printf("%s", "CLS"); break;
+                case 0xEE: printf("%s", "RET"); break;
+                case 0x00: printf("%s", "NOP"); break;
+                default:   printf("UNKNOWN 0x0 OP"); break;
+            } break;
+        case 0x1: printf("%s 0x%03x", "JP", (inst & 0x0FFF));break;
+        case 0x2: printf("%s (0x%03x)", "CALL", (inst & 0x0FFF)); break;
+        case 0x3: printf("%s V%X, 0x%02x", "SE", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x4: printf("%s V%X, 0x%02x", "SNE", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x5: printf("%s V%X, V%X", "SE", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+        case 0x6: printf("%s V%X, 0x%02x", "LD", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x7: printf("%s V%X, 0x%02x", "ADD", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0x8:
+            switch (inst & 0x000F)
+            {
+                case 0x0: printf("%s V%X, V%X", "LD", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x1: printf("%s V%X, V%X", "OR", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x2: printf("%s V%X, V%X", "AND", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x3: printf("%s V%X, V%X", "XOR", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x4: printf("%s V%X, V%X", "ADD", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x5: printf("%s V%X, V%X", "SUB", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x6: printf("%s V%X, V%X", "SHR", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0x7: printf("%s V%X, V%X", "SUBN", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                case 0xE: printf("%s V%X, V%X", "SHL", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+                default:  printf("UNKNOWN 0x8 OP"); break;
+            } break;
+        case 0x9: printf("%s V%X, V%X", "SNE", (inst>>8 & 0x0F), (inst>>4 & 0x000F)); break;
+        case 0xA: printf("%s I, 0x%03x", "LD", (inst & 0x0FFF)); break;
+        case 0xB: printf("%s 0x%03x(V0)", "JP", (inst & 0x0FFF)); break;
+        case 0xC: printf("%s V%X, 0x%02x", "RND", (inst>>8 & 0x0F), (inst & 0x00FF)); break;
+        case 0xD: printf("%s V%X, V%X, %#x", "DRW", (inst>>8 & 0x0F), (inst>>4 & 0x00F), (inst & 0x000F)); break;
+        case 0xE:
+            switch (inst & 0x00FF)
+            {
+                case 0x9E: printf("%s V%X", "SKP", (inst>>8 & 0x0F)); break;
+                case 0xA1: printf("%s V%X", "SKNP", (inst>>8 & 0x0F)); break;
+                default:   printf("UNKNOWN 0xE OP"); break;
+            } break;
+        case 0xF:
+            switch (inst & 0x00FF)
+            {
+                case 0x07: printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "DT"); break;
+                case 0x0A: printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "K"); break;
+                case 0x15: printf("%s %s, V%X", "LD", "DT", (inst>>8 & 0x0F)); break;
+                case 0x18: printf("%s %s, V%X", "LD", "ST", (inst>>8 & 0x0F)); break;
+                case 0x1E: printf("%s %s, V%X", "ADD", "I", (inst>>8 & 0x0F)); break;
+                case 0x29: printf("%s %s, V%X", "LD", "F", (inst>>8 & 0x0F)); break;
+                case 0x33: printf("%s %s, V%X", "LD", "B", (inst>>8 & 0x0F)); break;
+                case 0x55: printf("%s %s, V%X", "LD", "(I)", (inst>>8 & 0x0F)); break;
+                case 0x65: printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "(I)"); break;
+                default:  printf("UNKNOWN 0xF OP"); break;
+            } break;
+        default: break;
+    }
+
+    printf("\n");
+}
+
+
+
+
 
 CHIP8Cpu::~CHIP8Cpu() = default;

@@ -10,7 +10,7 @@
 //Screen dimension constants
 const int SCREEN_WIDTH = 64;
 const int SCREEN_HEIGHT = 32;
-const int SCALE_FACTOR = 15;
+const int SCALE_FACTOR = 5;
 
 class Screen
 {
@@ -25,6 +25,8 @@ class Screen
 		void drawPixel(int x, int y);
 		void blit();
 		void clearScreen();
+		void delay(int seconds);
+
 		
 	private:
 		bool init();

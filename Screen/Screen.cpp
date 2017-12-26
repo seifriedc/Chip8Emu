@@ -122,3 +122,8 @@ void Screen::fillBuffer(int i)
 		}
 	}
 }
+
+void Screen::delay(int milliseconds)
+{
+	SDL_Delay(milliseconds);
+}
