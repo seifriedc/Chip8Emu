@@ -162,24 +162,25 @@ void CHIP8Cpu::nextInstruction() {
         	vy = (inst & 0x00F0) >> 4;
         	arg = (inst & 0x000F);
 
-        	for (int cnt = 0; cnt < arg; cnt++)
-        	{
-        		#ifdef DEBUG_CHIP8CPU_NEXTINSTRUCTION
-        			if (cnt % 8 == 0)
-						printf("DEBUG: At memory location %d, the byte is %x.\n", I, memory[I]);
-    			#endif
-        		if ( memory[(I) + (cnt/8)] >> (7 - (cnt % 8) == 1) )
-        		{
-        			screen.buffer[vx + cnt%8][vy + cnt/8] = 1;
-        		}
-        		else
-        		{
-        			screen.buffer[vx + cnt%8][vy + cnt/8] = 0;
-        		}
-        	}
-
-        	screen.blit();
-
+            for (int lineNum = 0; lineNum < (inst & 0x000F); lineNum++)
+            {
+                for (int rowNum = 0; rowNum < 8; rowNum++)
+                {
+                    if ( ( ( memory[I + lineNum] ) >> (7 - rowNum) ) & 0x0001 )
+                    {
+                        if (buffer[vx + rowNum][vy + lineNum] != 0)
+                        {
+                            // This bit has already been set to something else!
+                            // A collision has occured! Set VF to 1.
+                            vregs[]
+                        }
+                        
+                        
+                        buffer[vx + rowNum][vy + lineNum] = 49;
+                    }
+                }
+            }
+            screen.blit();
             break;
         case 0xE:
             switch (inst & 0x00FF)
