@@ -19,7 +19,7 @@ bool Screen::init()
 
 	// Then, we'll create the window.
 	gWindow = SDL_CreateWindow( "CHIP-8 Emulator", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * SCALE_FACTOR, SCREEN_HEIGHT * SCALE_FACTOR, SDL_WINDOW_SHOWN );
 
 	if (gWindow == NULL)
 		return false;	// Something went wrong in the creation of the window.
@@ -59,11 +59,15 @@ bool Screen::init()
 	return true;
 }
 
+
 void Screen::drawPixel(int x, int y)
 {
+	/*
 	SDL_RenderDrawPoint(gRenderer, x, y);
 	SDL_RenderPresent(gRenderer);
+	*/
 }
+
 
 void Screen::clearScreen()
 {
@@ -98,7 +102,11 @@ void Screen::blit()
 				// The pixel is not in use. We'll draw WHITE onto this pixel then.
 				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 			}
-			SDL_RenderDrawPoint(gRenderer, x, y);
+
+			for (int i = 0; i < SCALE_FACTOR * SCALE_FACTOR; i++)
+			{
+				SDL_RenderDrawPoint(gRenderer, (x*SCALE_FACTOR) + i/SCALE_FACTOR, (y*SCALE_FACTOR) + i%SCALE_FACTOR);
+			}
 		}
 	}
 	SDL_RenderPresent(gRenderer);

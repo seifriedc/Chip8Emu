@@ -168,15 +168,12 @@ void CHIP8Cpu::nextInstruction() {
                 {
                     if ( ( ( memory[I + lineNum] ) >> (7 - rowNum) ) & 0x0001 )
                     {
-                        if (buffer[vx + rowNum][vy + lineNum] != 0)
+                        if (screen.buffer[vx + rowNum][vy + lineNum] != 0)
                         {
                             // This bit has already been set to something else!
                             // A collision has occured! Set VF to 1.
-                            vregs[]
                         }
-                        
-                        
-                        buffer[vx + rowNum][vy + lineNum] = 49;
+                        screen.buffer[vx + rowNum][vy + lineNum] = 49;
                     }
                 }
             }
