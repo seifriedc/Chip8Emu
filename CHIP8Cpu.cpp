@@ -79,20 +79,13 @@ void CHIP8Cpu::nextInstruction() {
     //#define DEBUG_PRINT_INSTRUCTION
     //#define ENABLE_STEP_INSTRUCTIONS
 
-    unsigned short tmp, inst, top;     // For reading in the instruction
+    unsigned short inst, top;     // For reading in the instruction
     int vx, vy, arg;                   // Regs and immediate value in instruction, if present
 
-    //printf("The program counter is: %x\n", pc);
-
-    // Chris-- originally, you had this line similar to how it is in chip8dis.c, but it was not working.
-    // I modified it to be the following and it appears to have fixed the issue... not sure if its the most efficient however.
-    // Please take a look at this if you can.
-    tmp = (memory[pc] << 8) | memory[pc+1]; // Read in next instruction (2 bytes)
-
-    //printf("tmp is equal to: %x\n", tmp);
+    // Read in next instruction (2 bytes)
+    inst = (memory[pc] << 8) | memory[pc+1];
 
     // Also, simply because of the way I fixed tmp, we don't need to flip the endianness
-    inst = tmp;						       // no need to flip the endianness
     top = (inst >> 12);                    // Get top half-byte
 
     // By default
@@ -146,7 +139,7 @@ void CHIP8Cpu::nextInstruction() {
             if (vregs[vx] == vregs[vy]) pc += 2;
             break;
         case 0x6: // LD Vx, byte
-            vregs[vx] = arg;
+            vregs[vx] = (unsigned char) arg;
             break;
         case 0x7: // ADD Vx, byte
             vregs[vx] += arg;
@@ -162,7 +155,7 @@ void CHIP8Cpu::nextInstruction() {
                 {
                     int sum = vregs[vx] + vregs[vy]; // Add Vx and Vy together
                     vregs[15] = (sum > 255) ? 1 : 0; // Set carry flag (VF) if necessary
-                    vregs[vx] = sum & 0x00FF;        // Put last 8 bits of sum in Vx
+                    vregs[vx] = (unsigned char) (sum & 0x00FF);        // Put last 8 bits of sum in Vx
                     break;
                 }
                 case 0x5: // SUB Vx, Vy
@@ -187,14 +180,14 @@ void CHIP8Cpu::nextInstruction() {
             if (vregs[vx] != vregs[vy]) pc += 2;
             break;
         case 0xA: // LD I, addr
-            I = inst & 0x0FFF;
+            I = (unsigned short) (inst & 0x0FFF);
             //cout << "DEBUG_CHIP8CPU_NEXTINSTRUCTION: Memory address I points to byte: " << I << endl;
             break;
         case 0xB: // JP V0, addr
-            pc = vregs[0] + (inst & 0x0FFF);
+            pc = (vregs[0] + (inst & 0x0FFF)) - 2;
             break;
         case 0xC: // RND Vx, byte
-            vregs[vx] = dist(rng) & (inst & 0x00FF);
+            vregs[vx] = (unsigned char)(dist(rng) & (inst & 0x00FF));
             break;
         case 0xD: // DRW Vx, Vy, nibble
         	
@@ -241,7 +234,7 @@ void CHIP8Cpu::nextInstruction() {
                     break;
                 default: break;
             } break;
-        case 0xF: // TODO: Finish 0xF and draw instructions
+        case 0xF:
         	switch (inst & 0x00FF)
             {
                 case 0x07:
@@ -303,7 +296,7 @@ void CHIP8Cpu::nextInstruction() {
                 //printf("%s %s, V%X", "LD", "(I)", (inst>>8 & 0x0F));
                     for (int i = 0; i <= vx; i++) 
                     {
-                        memory[I+i] = (unsigned char) vregs[i];
+                        memory[I+i] = vregs[i];
                     }
                 break;
 

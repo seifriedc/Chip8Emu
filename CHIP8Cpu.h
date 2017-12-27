@@ -13,7 +13,7 @@
 #include <SDL2/SDL.h>
 
 // Screen functionality
-#include "Screen/Screen.h";
+#include "Screen/Screen.h"
 
 using namespace std;
 

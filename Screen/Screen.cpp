@@ -86,7 +86,8 @@ void Screen::clearScreen()
 void Screen::blit()
 {
 	// Clear the renderer of whatever might have been there before.
-	SDL_RenderClear(gRenderer);
+	// Shouldn't need to clear the renderer if we are writing our whole screen out to it
+	// SDL_RenderClear(gRenderer);
 
 	for (int y = 0; y < SCREEN_HEIGHT; y++)
 	{
