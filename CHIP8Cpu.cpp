@@ -206,7 +206,7 @@ void CHIP8Cpu::nextInstruction() {
 
         	// We'll pull the actual "bitmap" of the graphic from location I
         	// in memory. In our case, we'll simply iterate through location I.
-        	cout << "DRAW: " << endl;
+        	//cout << "DRAW: I = " << I << endl;
         	vx = (inst & 0x0F00) >> 8;
         	vy = (inst & 0x00F0) >> 4;
         	arg = (inst & 0x000F);
@@ -306,12 +306,16 @@ void CHIP8Cpu::nextInstruction() {
 
                 case 0x55:
                 //printf("%s %s, V%X", "LD", "(I)", (inst>>8 & 0x0F));
-                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
+                    for (int i = 0; i <= vx; i++) {
+                        memory[I+i] = (unsigned char) vregs[i];
+                    }
                 break;
 
                 case 0x65:
                 //printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "(I)");
-                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
+                    for (int i = 0; i <= vx; i++) {
+                        vregs[i] = memory[I+i];
+                    }
                 break;
 
                 default:
