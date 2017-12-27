@@ -106,7 +106,7 @@ void CHIP8Cpu::nextInstruction() {
 
     #ifdef DEBUG_PRINT_INSTRUCTION
     	disInstruction(pc,inst);
-    	//screen.delay(100);
+    	screen.delay(100);
     #endif
 
     // If the program counter is less than the start of the ROM, something has gone wrong, and we should throw an exception.
@@ -217,12 +217,18 @@ void CHIP8Cpu::nextInstruction() {
                 {
                     if ( ( ( memory[I + lineNum] ) >> (7 - rowNum) ) & 0x0001 )
                     {
+                    	// If we've reached this point, we need to flip the bit.
                         if (screen.buffer[vx + rowNum][vy + lineNum] != 0)
                         {
                             // This bit has already been set to something else!
                             // A collision has occured! Set VF to 1.
+                        	vregs[0xF] = 1;
+                        	screen.buffer[vx + rowNum][vy + lineNum] = 0;
                         }
-                        screen.buffer[vx + rowNum][vy + lineNum] = 49;
+                        else
+                        {
+                        	screen.buffer[vx + rowNum][vy + lineNum] = 1;
+                        }
                     }
                 }
             }
@@ -249,6 +255,11 @@ void CHIP8Cpu::nextInstruction() {
 
                 case 0x0A: 
                 //printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "K");
+                
+                // BLOCKING CALL
+                // A key press is awaited, then stored in VX.
+
+                // Implement the keypress functionality from SCREEN here.
 
                 break;
 
@@ -260,18 +271,35 @@ void CHIP8Cpu::nextInstruction() {
 
                 case 0x18:
                 //printf("%s %s, V%X", "LD", "ST", (inst>>8 & 0x0F));
+                // Load the value in (inst & 0x0F00) into sound_timer;
+                sound_timer = (inst & 0x0F00);
                 break;
 
                 case 0x1E:
                 //printf("%s %s, V%X", "ADD", "I", (inst>>8 & 0x0F));
+
+                // Add the value of VX to I.
+                I += vregs[vx];
                 break;
 
                 case 0x29:
                 //printf("%s %s, V%X", "LD", "F", (inst>>8 & 0x0F));
+
+                // Load the corresponding sprite value
+                memory[I] = vregs[vx] * 0x5;
                 break;
 
                 case 0x33:
                 //printf("%s %s, V%X", "LD", "B", (inst>>8 & 0x0F));
+                
+                // Store the binary representation of VX (whichever one is given), with:
+                //		the hundreds digit at address I
+                //		the tens digit at address I + 1
+                //		the ones digit at address I + 2
+                // sample no 154
+                memory[I] = (vregs[vx] % 1000) / 100;		//hundreds
+                memory[I+1] = (vregs[vx] % 100) / 10;		//tens
+                memory[I+2] = (vregs[vx] % 10); 			//ones
                 break;
 
                 case 0x55:
@@ -306,8 +334,10 @@ void disInstruction(int pc, unsigned short inst)
     uint8_t top = (inst >> 12);                 // Get top half-byte
 
     // Print address and op
-    printf("%04x %04x    ", pc, inst);
-
+    //if (top == 0xF)
+    //{
+    	printf("%04x %04x    ", pc, inst);
+    //}
     // Act on op
     switch (top)
     {
