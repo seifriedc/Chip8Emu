@@ -24,7 +24,11 @@ int main(int argc, char** argv) {
         chip8.getInput();
         chip8.nextInstruction();
         chip8.render();
-        SDL_Delay(4);
+        
+
+        // less granularity for the delay
+        SDL_Delay(2);
+
     }
 }
 

@@ -88,6 +88,11 @@ void CHIP8Cpu::getInput() {
             keyChanged = keymap[event.key.keysym.sym];
             break;
 
+        // For once, we can actually CLOSE the PROGRAM without ERRORS!
+        case SDL_QUIT:
+            exit(0);
+            break;
+
         default: break;
     }
 }
