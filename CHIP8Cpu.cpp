@@ -266,13 +266,13 @@ void CHIP8Cpu::nextInstruction() {
                 case 0x15:
                 //printf("%s %s, V%X", "LD", "DT", (inst>>8 & 0x0F));
                 // Load the value in (inst & 0x0F00) into delay_timer;
-                delay_timer = (inst & 0x0F00);
+                delay_timer = (unsigned char)(inst & 0x0F00);
                 break;
 
                 case 0x18:
                 //printf("%s %s, V%X", "LD", "ST", (inst>>8 & 0x0F));
                 // Load the value in (inst & 0x0F00) into sound_timer;
-                sound_timer = (inst & 0x0F00);
+                sound_timer = (unsigned char)(inst & 0x0F00);
                 break;
 
                 case 0x1E:
@@ -285,8 +285,10 @@ void CHIP8Cpu::nextInstruction() {
                 case 0x29:
                 //printf("%s %s, V%X", "LD", "F", (inst>>8 & 0x0F));
 
-                // Load the corresponding sprite value
-                memory[I] = vregs[vx] * 0x5;
+                    // Load the corresponding sprite value
+                    // We want the address in memory of the start of the sprite
+                    // Sprites start at address 0x050, then we offset
+                    I = 0x050 + (vregs[vx] * 5);
                 break;
 
                 case 0x33:
