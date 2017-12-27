@@ -104,10 +104,14 @@ void Screen::blit()
 				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 			}
 
+			/*
 			for (int i = 0; i < SCALE_FACTOR * SCALE_FACTOR; i++)
 			{
 				SDL_RenderDrawPoint(gRenderer, (x*SCALE_FACTOR) + i/SCALE_FACTOR, (y*SCALE_FACTOR) + i%SCALE_FACTOR);
 			}
+			*/
+			struct SDL_Rect s = {x*SCALE_FACTOR,y*SCALE_FACTOR,SCALE_FACTOR,SCALE_FACTOR};
+			SDL_RenderFillRect(gRenderer, &s);
 		}
 	}
 	SDL_RenderPresent(gRenderer);
