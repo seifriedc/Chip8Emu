@@ -35,11 +35,6 @@ CHIP8Cpu::CHIP8Cpu(const char *romname) {
     char * romStart = (char *) ( &(memory[ROM_START]));
     rom.read(romStart, romSize);
 
-	printf("The starting memory byte (instruction) contains: %x.\n", memory[ROM_START]);
-    printf("The starting memory byte (instruction) contains: %x.\n", memory[ROM_START+1]);
-
-
-
     // The ROM is now in memory. Close the ROM.
     rom.close();
 
@@ -80,8 +75,8 @@ void disInstruction(int pc, unsigned short inst);
 
 void CHIP8Cpu::nextInstruction() {
     // Debug flag
-    #define DEBUG_CHIP8CPU_NEXTINSTRUCTION
-    #define DEBUG_PRINT_INSTRUCTION
+    //#define DEBUG_CHIP8CPU_NEXTINSTRUCTION
+    //#define DEBUG_PRINT_INSTRUCTION
     //#define ENABLE_STEP_INSTRUCTIONS
 
     unsigned short tmp, inst, top;     // For reading in the instruction
@@ -107,9 +102,6 @@ void CHIP8Cpu::nextInstruction() {
 
     #ifdef DEBUG_PRINT_INSTRUCTION
     	disInstruction(pc,inst);
-    	#ifndef ENABLE_STEP_INSTRUCTIONS
-    		screen.delay(10);
-    	#endif
     #endif
 
     // If the program counter is less than the start of the ROM, something has gone wrong, and we should throw an exception.
@@ -142,8 +134,6 @@ void CHIP8Cpu::nextInstruction() {
             break;
         case 0x2: // CALL addr
             callstack[++sp] = pc; // Increment $sp, push current $pc to top of stack
-
-            cout << inst;
             pc = (unsigned short) (inst & (unsigned short) 0x0FFF) - 2;   // Set $pc to jump addr
             break;
         case 0x3: // SE Vx, byte
@@ -212,7 +202,7 @@ void CHIP8Cpu::nextInstruction() {
 
         	// We'll pull the actual "bitmap" of the graphic from location I
         	// in memory. In our case, we'll simply iterate through location I.
-        	cout << "DRAW: at coordinates " << vx << " and " << vy << endl;
+        	//cout << "DRAW: at coordinates " << vx << " and " << vy << endl;
         	//vx = (inst & 0x0F00) >> 8;
         	//vy = (inst & 0x00F0) >> 4;
         	arg = (inst & 0x000F);
