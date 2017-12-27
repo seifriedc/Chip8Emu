@@ -10,7 +10,7 @@
 //Screen dimension constants
 const int SCREEN_WIDTH = 64;
 const int SCREEN_HEIGHT = 32;
-const int SCALE_FACTOR = 5;
+const int SCALE_FACTOR = 1;
 
 class Screen
 {

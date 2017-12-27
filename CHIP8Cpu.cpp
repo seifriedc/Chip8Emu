@@ -106,7 +106,7 @@ void CHIP8Cpu::nextInstruction() {
 
     #ifdef DEBUG_PRINT_INSTRUCTION
     	disInstruction(pc,inst);
-    	screen.delay(100);
+    	screen.delay(10);
     #endif
 
     // If the program counter is less than the start of the ROM, something has gone wrong, and we should throw an exception.
@@ -260,7 +260,7 @@ void CHIP8Cpu::nextInstruction() {
                 // A key press is awaited, then stored in VX.
 
                 // Implement the keypress functionality from SCREEN here.
-
+                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
                 break;
 
                 case 0x15:
@@ -304,14 +304,17 @@ void CHIP8Cpu::nextInstruction() {
 
                 case 0x55:
                 //printf("%s %s, V%X", "LD", "(I)", (inst>>8 & 0x0F));
+                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
                 break;
 
                 case 0x65:
                 //printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "(I)");
+                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
                 break;
 
                 default:
                 //printf("UNKNOWN 0xF OP");
+                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
                 break;
             } break;
         default: break;
