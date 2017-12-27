@@ -38,8 +38,8 @@ private:
     int callstack[48] = {};     // Allows for 24 nested calls
 
     // Registers
-    int vregs[16] = {};         // V registers
-    int I = 0;                  // I register
+    unsigned char vregs[16] = {};         // V registers
+    unsigned short I = 0;                  // I register
     int pc = 0x200;             // Program counter
 
     // Input
