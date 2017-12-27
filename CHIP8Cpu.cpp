@@ -133,6 +133,7 @@ void CHIP8Cpu::nextInstruction() {
             switch (inst & 0x00FF)
             {
                 case 0xE0: // CLS
+                    screen.clearScreen();
                     break;
                 case 0xEE: // RET
                     pc = callstack[sp];  // Set $pc to addr at top of stack
