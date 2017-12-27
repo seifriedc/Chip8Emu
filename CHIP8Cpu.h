@@ -28,6 +28,7 @@ public:
     void nextInstruction();
     void render();
 
+
     RNG rng;        // Random number gen engine
     uniform_int_distribution<int> dist {0,255}; // Distribution for RNG
 
@@ -53,6 +54,9 @@ private:
     
     // Screen
     Screen screen;
+
+    // Debug trace method
+    void debugTrace();
 };
 
 #endif //CHIP8EMU_CHIP8CPU_H

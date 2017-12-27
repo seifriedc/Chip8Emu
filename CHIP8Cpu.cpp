@@ -113,6 +113,7 @@ void CHIP8Cpu::nextInstruction() {
     if (pc < ROM_START)
     {
     	printf("ERROR: An invalid program counter %x was detected!\n", pc);
+    	debugTrace();
     	abort();
     }
 
@@ -134,11 +135,13 @@ void CHIP8Cpu::nextInstruction() {
             break;
         case 0x1: // JP addr
         	// In an unconditional jump, I'm pretty sure that the address also has to be offset by the program counter increment value (in this case, 2)
-            pc = inst & 0x0FFF + (-2); // Set $pc to jump addr
+            pc = (unsigned short) (inst & (unsigned short) 0x0FFF) - 2; // Set $pc to jump addr
             break;
         case 0x2: // CALL addr
             callstack[++sp] = pc; // Increment $sp, push current $pc to top of stack
-            pc = inst & 0x0FFF;   // Set $pc to jump addr
+
+            cout << inst;
+            pc = (unsigned short) (inst & (unsigned short) 0x0FFF) - 2;   // Set $pc to jump addr
             break;
         case 0x3: // SE Vx, byte
             if (vregs[vx] == arg) pc += 2;
@@ -206,9 +209,9 @@ void CHIP8Cpu::nextInstruction() {
 
         	// We'll pull the actual "bitmap" of the graphic from location I
         	// in memory. In our case, we'll simply iterate through location I.
-        	cout << "DRAW: " << endl;
-        	vx = (inst & 0x0F00) >> 8;
-        	vy = (inst & 0x00F0) >> 4;
+        	cout << "DRAW: at coordinates " << vx << " and " << vy << endl;
+        	//vx = (inst & 0x0F00) >> 8;
+        	//vy = (inst & 0x00F0) >> 4;
         	arg = (inst & 0x000F);
 
             for (int lineNum = 0; lineNum < (inst & 0x000F); lineNum++)
@@ -405,6 +408,20 @@ void disInstruction(int pc, unsigned short inst)
     }
 
     printf("\n");
+}
+
+void CHIP8Cpu::debugTrace()
+{
+	// The following will print out useful information in regards to the CPU.
+
+	// First, we're going to print out all of the V registers.
+	printf("%4s %4s %4s %4s %4s %4s %4s %4s\n", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7");
+	printf("%4x %4x %4x %4x %4x %4x %4x %4x\n", vregs[0], vregs[1], vregs[2], vregs[3], vregs[4], vregs[5], vregs[6], vregs[7]);
+	printf("%4x %4x %4x %4x %4x %4x %4x %4x\n", vregs[8], vregs[9], vregs[10], vregs[11], vregs[12], vregs[13], vregs[14], vregs[15]);
+	printf("%4s %4s %4s %4s %4s %4s %4s %9s\n", "v8", "v9", "vA", "vB", "vC", "vD", "vE", "vF(carry)");
+
+	// Then, we'll print out the current I location, and the contents of it.
+	printf("\nI: %x     contains:  %x %x %x %x\n", I, memory[I], memory[I+1], memory[I+2], memory[1+3]);
 }
 
 
