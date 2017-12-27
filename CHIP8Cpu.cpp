@@ -68,7 +68,28 @@ CHIP8Cpu::CHIP8Cpu(const char *romname) {
 }
 
 void CHIP8Cpu::getInput() {
+    SDL_Event event;
+    SDL_PollEvent(&event);
 
+    // Catch key presses and other events
+    switch (event.type)
+    {
+        //case SDL_QUIT: break;
+
+        // There's probably a smarter way to do this, but this can work for now.
+        // event.key.keysym.sym is the key that has been acted upon
+        case SDL_KEYDOWN:
+            keys[keymap[event.key.keysym.sym]] = true;
+            keyChanged = keymap[event.key.keysym.sym];
+            break;
+
+        case SDL_KEYUP:
+            keys[keymap[event.key.keysym.sym]] = false;
+            keyChanged = keymap[event.key.keysym.sym];
+            break;
+
+        default: break;
+    }
 }
 
 void disInstruction(int pc, unsigned short inst);
@@ -247,9 +268,11 @@ void CHIP8Cpu::nextInstruction() {
                 
                 // BLOCKING CALL
                 // A key press is awaited, then stored in VX.
+                    getInput(); // Is this right? Maybe use SDL_WaitEvent() here
+                    vregs[vx] = (unsigned char) keyChanged;
 
-                // Implement the keypress functionality from SCREEN here.
-                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
+                // Implement the keypress functionality from SCREEN here
+                //cout << "\tWARNING: Unimplemented instruction! \n" << endl;
                 break;
 
                 case 0x15:
