@@ -82,6 +82,7 @@ void CHIP8Cpu::nextInstruction() {
     // Debug flag
     #define DEBUG_CHIP8CPU_NEXTINSTRUCTION
     #define DEBUG_PRINT_INSTRUCTION
+    //#define ENABLE_STEP_INSTRUCTIONS
 
     unsigned short tmp, inst, top;     // For reading in the instruction
     int vx, vy, arg;                   // Regs and immediate value in instruction, if present
@@ -106,7 +107,9 @@ void CHIP8Cpu::nextInstruction() {
 
     #ifdef DEBUG_PRINT_INSTRUCTION
     	disInstruction(pc,inst);
-    	screen.delay(10);
+    	#ifndef ENABLE_STEP_INSTRUCTIONS
+    		screen.delay(10);
+    	#endif
     #endif
 
     // If the program counter is less than the start of the ROM, something has gone wrong, and we should throw an exception.
@@ -221,16 +224,16 @@ void CHIP8Cpu::nextInstruction() {
                     if ( ( ( memory[I + lineNum] ) >> (7 - rowNum) ) & 0x0001 )
                     {
                     	// If we've reached this point, we need to flip the bit.
-                        if (screen.buffer[vx + rowNum][vy + lineNum] != 0)
+                        if (screen.buffer[vregs[vx] + rowNum][vregs[vy] + lineNum] != 0)
                         {
                             // This bit has already been set to something else!
                             // A collision has occured! Set VF to 1.
                         	vregs[0xF] = 1;
-                        	screen.buffer[vx + rowNum][vy + lineNum] = 0;
+                        	screen.buffer[vregs[vx] + rowNum][vregs[vy] + lineNum] = 0;
                         }
                         else
                         {
-                        	screen.buffer[vx + rowNum][vy + lineNum] = 1;
+                        	screen.buffer[vregs[vx] + rowNum][vregs[vy] + lineNum] = 1;
                         }
                     }
                 }
@@ -336,6 +339,16 @@ void CHIP8Cpu::nextInstruction() {
     {
     	delay_timer--;
     }
+
+    #ifdef ENABLE_STEP_INSTRUCTIONS
+    	debugTrace();
+    	cin.get();
+    	system("clear");
+    #endif
+
+
+
+
 }
 
 void CHIP8Cpu::render() {
@@ -419,6 +432,8 @@ void CHIP8Cpu::debugTrace()
 {
 	// The following will print out useful information in regards to the CPU.
 
+
+	printf("DEBUG_TRACE:\n-----------\n\n");
 	// First, we're going to print out all of the V registers.
 	printf("%4s %4s %4s %4s %4s %4s %4s %4s\n", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7");
 	printf("%4x %4x %4x %4x %4x %4x %4x %4x\n", vregs[0], vregs[1], vregs[2], vregs[3], vregs[4], vregs[5], vregs[6], vregs[7]);
@@ -427,6 +442,14 @@ void CHIP8Cpu::debugTrace()
 
 	// Then, we'll print out the current I location, and the contents of it.
 	printf("\nI: %x     contains:  %x %x %x %x\n", I, memory[I], memory[I+1], memory[I+2], memory[1+3]);
+
+	// Finally, we'll print out the current callStack.
+	printf("STACK:\n");
+	for (int i = sp; i >= 0; i--)
+	{
+		printf("call %d: %x", i, callstack[i]);
+	}
+
 }
 
 
