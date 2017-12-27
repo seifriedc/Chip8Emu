@@ -123,11 +123,11 @@ void CHIP8Cpu::nextInstruction() {
             break;
         case 0x1: // JP addr
         	// In an unconditional jump, I'm pretty sure that the address also has to be offset by the program counter increment value (in this case, 2)
-            pc = (unsigned short) (inst & (unsigned short) 0x0FFF) - 2; // Set $pc to jump addr
+            pc = (inst & (unsigned short) 0x0FFF) - 2; // Set $pc to jump addr
             break;
         case 0x2: // CALL addr
             callstack[++sp] = pc; // Increment $sp, push current $pc to top of stack
-            pc = (unsigned short) (inst & (unsigned short) 0x0FFF) - 2;   // Set $pc to jump addr
+            pc = (inst & (unsigned short) 0x0FFF) - 2;   // Set $pc to jump addr
             break;
         case 0x3: // SE Vx, byte
             if (vregs[vx] == arg) pc += 2;
