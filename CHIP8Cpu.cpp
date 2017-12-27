@@ -301,7 +301,6 @@ void CHIP8Cpu::nextInstruction() {
                 //		the hundreds digit at address I
                 //		the tens digit at address I + 1
                 //		the ones digit at address I + 2
-                // sample no 154
                 memory[I] = (vregs[vx] % 1000) / 100;		//hundreds
                 memory[I+1] = (vregs[vx] % 100) / 10;		//tens
                 memory[I+2] = (vregs[vx] % 10); 			//ones
@@ -309,12 +308,18 @@ void CHIP8Cpu::nextInstruction() {
 
                 case 0x55:
                 //printf("%s %s, V%X", "LD", "(I)", (inst>>8 & 0x0F));
-                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
+                    for (int i = 0; i <= vx; i++) 
+                    {
+                        memory[I+i] = (unsigned char) vregs[i];
+                    }
                 break;
 
                 case 0x65:
                 //printf("%s V%X, %s", "LD", (inst>>8 & 0x0F), "(I)");
-                cout << "\tWARNING: Unimplemented instruction! \n" << endl;
+                    for (int i = 0; i <= vx; i++)
+                    {
+                        vregs[i] = memory[I+i];
+                    }
                 break;
 
                 default:
