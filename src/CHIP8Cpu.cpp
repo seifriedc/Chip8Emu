@@ -1,7 +1,7 @@
 // Chris Seifried
 // Constantino Flouras
 
-#include "CHIP8Cpu.h"
+#include "../include/CHIP8Cpu.h"
 
 // For debugging purposes...
 #include <stdio.h>

@@ -14,7 +14,7 @@
 #include <unordered_map>
 
 // Screen functionality
-#include "Screen/Screen.h"
+#include "Screen.h"
 
 using namespace std;
 

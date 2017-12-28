@@ -1,8 +1,8 @@
 // Chris Seifried
 // Constantino Flouras
 
-#include "CHIP8Emu.h"
-#include "CHIP8Cpu.h"
+#include "../include/CHIP8Emu.h"
+#include "../include/CHIP8Cpu.h"
 using namespace std;
 
 // Suppress warnings about infinite loops

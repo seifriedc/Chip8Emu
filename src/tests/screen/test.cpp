@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "Screen.h"
+#include "../../../include/Screen.h"
 
 int main()
 {
