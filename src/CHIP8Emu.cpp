@@ -24,11 +24,10 @@ int main(int argc, char** argv) {
         chip8.getInput();
         chip8.nextInstruction();
         chip8.render();
-        
 
         // less granularity for the delay
+        // TODO: Take as runtime arg?
         SDL_Delay(2);
-
     }
 }
 

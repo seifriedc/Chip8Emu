@@ -473,8 +473,4 @@ void CHIP8Cpu::debugTrace()
     }
 }
 
-
-
-
-
 CHIP8Cpu::~CHIP8Cpu() = default;

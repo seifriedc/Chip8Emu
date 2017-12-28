@@ -32,6 +32,8 @@ target_compile_options(chip8emu PUBLIC -Wall)
 ## dependencies ###############################################################
 ###############################################################################
 
+set(CMAKE_MODULE_PATH cmake)
+
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
