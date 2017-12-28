@@ -229,6 +229,8 @@ void CHIP8Cpu::nextInstruction() {
         	// in memory. In our case, we'll simply iterate through location I.
         	arg = (inst & 0x000F);
 
+            // We will assume that our draw is successful, until proven failed.
+            vregs[0xF] = 0;
             for (int lineNum = 0; lineNum < (inst & 0x000F); lineNum++)
             {
                 for (int rowNum = 0; rowNum < 8; rowNum++)
