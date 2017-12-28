@@ -5,6 +5,8 @@
 
 // For debugging purposes...
 #include <stdio.h>
+#include <ctime>
+#include <chrono>
 
 CHIP8Cpu::CHIP8Cpu(const char *romname) {
     ifstream rom;   // Input stream for the ROM file
@@ -104,6 +106,9 @@ void CHIP8Cpu::nextInstruction() {
     //#define DEBUG_CHIP8CPU_NEXTINSTRUCTION
     //#define DEBUG_PRINT_INSTRUCTION
     //#define ENABLE_STEP_INSTRUCTIONS
+
+    // Timing values (this will store the time we entered the instruction)
+    int64_t time_exit_instruction = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count() + (int64_t) (CPU_RATE * 100000);
 
     unsigned short inst, top;     // For reading in the instruction
     int vx, vy, arg;                   // Regs and immediate value in instruction, if present
@@ -364,7 +369,20 @@ void CHIP8Cpu::nextInstruction() {
 
 
 
+    // Wait in a busy loop until the appropriate amount of time elapses.
+    while (std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count() < time_exit_instruction)
+    {
+        // Not time to exit the instruction yet.
 
+        // But while we're busy waiting, we can get input! (And if we do, we'll break out of the loop so that we don't lag)
+        if (getInput())
+        {
+            break;
+        }
+        //cout << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+    };
+
+    return;
 }
 
 void CHIP8Cpu::render() {

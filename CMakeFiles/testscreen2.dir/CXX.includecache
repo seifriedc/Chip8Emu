@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/constantinoflouras/Desktop/GIT/CHIP-8/include/Screen.h
+SDL2/SDL.h
+-
+stdio.h
+-
+
+/home/constantinoflouras/Desktop/GIT/CHIP-8/src/Screen.cpp
+SDL2/SDL.h
+-
+stdio.h
+-
+../include/Screen.h
+/home/constantinoflouras/Desktop/GIT/CHIP-8/include/Screen.h
+
+/home/constantinoflouras/Desktop/GIT/CHIP-8/src/tests/screen/test.cpp
+stdio.h
+-
+../../../include/Screen.h
+/home/constantinoflouras/Desktop/GIT/CHIP-8/include/Screen.h
+

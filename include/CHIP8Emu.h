@@ -9,4 +9,6 @@
 #include <fstream>
 using namespace std;
 
+void delay(double milliseconds);
+
 #endif //CHIP8EMU_CHIP8EMU_H

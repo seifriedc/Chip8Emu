@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/chip8emu.dir/src/CHIP8Cpu.cpp.o CMakeFiles/chip8emu.dir/src/CHIP8Emu.cpp.o CMakeFiles/chip8emu.dir/src/Screen.cpp.o  -o chip8emu /usr/lib/x86_64-linux-gnu/libSDL2main.a /usr/lib/x86_64-linux-gnu/libSDL2.so -lpthread 

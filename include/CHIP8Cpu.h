@@ -71,6 +71,8 @@ private:
     unsigned char delay_timer;
     unsigned char sound_timer;
     
+    int CPU_RATE = 40;
+
     // Screen
     Screen screen;
 
