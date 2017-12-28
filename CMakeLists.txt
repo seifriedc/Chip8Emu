@@ -35,7 +35,7 @@ target_compile_options(chip8emu PUBLIC -Wall)
 set(CMAKE_MODULE_PATH cmake)
 
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
+include_directories(${SDL2_INCLUDE_DIR})
 
 target_link_libraries(chip8emu ${SDL2_LIBRARIES})
 target_link_libraries(testscreen1 ${SDL2_LIBRARIES})
