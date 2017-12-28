@@ -67,26 +67,24 @@ CHIP8Cpu::CHIP8Cpu(const char *romname) {
 	memcpy( (unsigned char *) &memory[0x050], (unsigned char *) &chip8_fontset[0], 80);
 }
 
-void CHIP8Cpu::getInput() {
+int CHIP8Cpu::getInput() {
     SDL_Event event;
     SDL_PollEvent(&event);
 
     // Catch key presses and other events
     switch (event.type)
     {
-        //case SDL_QUIT: break;
-
         // There's probably a smarter way to do this, but this can work for now.
         // event.key.keysym.sym is the key that has been acted upon
         case SDL_KEYDOWN:
             keys[keymap[event.key.keysym.sym]] = true;
             keyChanged = keymap[event.key.keysym.sym];
-            break;
+            return 1;
 
         case SDL_KEYUP:
             keys[keymap[event.key.keysym.sym]] = false;
             keyChanged = keymap[event.key.keysym.sym];
-            break;
+            return 1;
 
         // For once, we can actually CLOSE the PROGRAM without ERRORS!
         case SDL_QUIT:
@@ -95,6 +93,8 @@ void CHIP8Cpu::getInput() {
 
         default: break;
     }
+
+    return 0;
 }
 
 void disInstruction(int pc, unsigned short inst);
@@ -278,7 +278,7 @@ void CHIP8Cpu::nextInstruction() {
                 
                 // BLOCKING CALL
                 // A key press is awaited, then stored in VX.
-                    getInput(); // Is this right? Maybe use SDL_WaitEvent() here
+                    while (getInput() == 0); // Is this right? Maybe use SDL_WaitEvent() here
                     vregs[vx] = (unsigned char) keyChanged;
 
                 // Implement the keypress functionality from SCREEN here
@@ -463,9 +463,14 @@ void CHIP8Cpu::debugTrace()
 	printf("STACK:\n");
 	for (int i = sp; i >= 0; i--)
 	{
-		printf("call %d: %x", i, callstack[i]);
+		printf("call %d: %x\n", i, callstack[i]);
 	}
 
+    printf("\nKEYPAD:\n");
+    for (int i = 0; i < 16; i++)
+    {
+        printf("key %d: %d\n", i, keys[i]);
+    }
 }
 
 
