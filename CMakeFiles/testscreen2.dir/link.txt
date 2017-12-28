@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/testscreen2.dir/src/tests/screen/test.cpp.o CMakeFiles/testscreen2.dir/src/Screen.cpp.o  -o testscreen2 /usr/lib/x86_64-linux-gnu/libSDL2main.a /usr/lib/x86_64-linux-gnu/libSDL2.so -lpthread 

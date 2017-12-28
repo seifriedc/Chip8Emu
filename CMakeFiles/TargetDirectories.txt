@@ -1,6 +1,0 @@
-/home/constantinoflouras/Desktop/GIT/CHIP-8/CMakeFiles/rebuild_cache.dir
-/home/constantinoflouras/Desktop/GIT/CHIP-8/CMakeFiles/edit_cache.dir
-/home/constantinoflouras/Desktop/GIT/CHIP-8/CMakeFiles/testscreen2.dir
-/home/constantinoflouras/Desktop/GIT/CHIP-8/CMakeFiles/testscreen1.dir
-/home/constantinoflouras/Desktop/GIT/CHIP-8/CMakeFiles/chip8dis.dir
-/home/constantinoflouras/Desktop/GIT/CHIP-8/CMakeFiles/chip8emu.dir
