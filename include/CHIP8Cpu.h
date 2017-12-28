@@ -25,7 +25,7 @@ public:
     explicit CHIP8Cpu(const char *romname);
     ~CHIP8Cpu();
 
-    void getInput();
+    int getInput();
     void nextInstruction();
     void render();
 
