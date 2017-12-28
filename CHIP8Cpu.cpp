@@ -64,7 +64,7 @@ CHIP8Cpu::CHIP8Cpu(const char *romname) {
 	};
 
 	//		Destination of the font
-	memcpy( (char *) &memory[0x050], (char *) &chip8_fontset[0], 80);
+	memcpy( (unsigned char *) &memory[0x050], (unsigned char *) &chip8_fontset[0], 80);
 }
 
 void CHIP8Cpu::getInput() {
@@ -138,7 +138,11 @@ void CHIP8Cpu::nextInstruction() {
             switch (inst & 0x00FF)
             {
                 case 0xE0: // CLS
-                    screen.clearScreen();
+                    for (int cnt = 0; cnt < 64*32; cnt++)
+                    {
+                        screen.buffer[cnt%64][cnt/64] = 0; 
+                    }
+                    screen.blit();
                     break;
                 case 0xEE: // RET
                     pc = callstack[sp];  // Set $pc to addr at top of stack
@@ -219,12 +223,10 @@ void CHIP8Cpu::nextInstruction() {
         case 0xD: // DRW Vx, Vy, nibble
         	
         	// Implement the draw functionality. We'll need to use a screen.
+            // The screen has been implemented in file Screen.cpp
 
         	// We'll pull the actual "bitmap" of the graphic from location I
         	// in memory. In our case, we'll simply iterate through location I.
-        	//cout << "DRAW: at coordinates " << vx << " and " << vy << endl;
-        	//vx = (inst & 0x0F00) >> 8;
-        	//vy = (inst & 0x00F0) >> 4;
         	arg = (inst & 0x000F);
 
             for (int lineNum = 0; lineNum < (inst & 0x000F); lineNum++)
